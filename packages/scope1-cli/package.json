@@ -1,0 +1,13 @@
+{
+  "name": "@scope1/cli",
+  "version": "1.0.0",
+  "description": "lerna example and test repo scope 1, command line interface",
+  "bin": [
+    "bin/command1"
+  ],
+  "author": "ericP",
+  "license": "ISC",
+  "dependencies": {
+    "@scope1/library2": "^0.1.0"
+  }
+}

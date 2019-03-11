@@ -1,0 +1,4 @@
+#!/usr/bin/env node
+
+console.log("@scope1/cli command1 requires " + require("@scope1/library2").name)
+console.log("@scope1/cli command1 sees all!")

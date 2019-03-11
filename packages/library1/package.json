@@ -1,0 +1,8 @@
+{
+  "name": "library1",
+  "version": "0.1.0",
+  "description": "lerna example and test repo library 1",
+  "main": "library1.js",
+  "files": [ "library1.js" ],
+  "license": "ISC"
+}

@@ -1,0 +1,13 @@
+{
+  "name": "@scope1/library2",
+  "version": "0.1.0",
+  "description": "lerna example and test repo scope 1, library 2",
+  "main": "scope1-library2.js",
+  "files": [
+    "scope1-library2.js"
+  ],
+  "license": "ISC",
+  "dependencies": {
+    "library1": "^0.1.0"
+  }
+}
