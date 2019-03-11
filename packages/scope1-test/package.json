@@ -1,0 +1,13 @@
+{
+  "name": "@scope1/test",
+  "private": true,
+  "description": "lerna example and test repo scope 1 tests",
+  "scripts": { "test": "mocha" },
+  "keywords": [],
+  "author": "ericP",
+  "license": "ISC",
+  "dependencies": {
+    "@scope1/cli": "^1.0.0",
+    "mocha": "^6.0.2"
+  }
+}

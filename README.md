@@ -185,3 +185,93 @@ Make sure you come back to the tutorial directory before we go on to testing.
 ``` bash
 cd ../tutorial
 ```
+
+## Testing
+
+We'll use the same dance to create a (minimal) package directory. Here we use Mocha conventions, but this works with Jest as well.
+
+``` bash
+mkdir packages/scope1-test
+mkdir packages/scope1-test/test
+```
+
+with a `packages/scope1-test/package.json`:
+
+``` json
+{
+  "name": "@scope1/test",
+  "private": true,
+  "description": "lerna example and test repo scope 1 tests",
+  "scripts": { "test": "mocha" },
+  "keywords": [],
+  "author": "ericP",
+  "license": "ISC"
+}
+```
+
+Now we finally use Lerna to add an outside package:
+
+``` bash
+npx lerna add mocha packages/scope1-test
+```
+
+as well as an internal package (`@scope1/cli`):
+
+``` bash
+npx lerna add @scope1/cli packages/scope1-test
+```
+
+The latter has the desired effect of symlinking to `packages/scope-cli` in `node_modules/@scope1` but the <a id="bin-names-are-numbers">command somehow got the name `0`</a>:
+
+``` bash
+$ ls -l packages/scope1-test/node_modules/.bin/ | grep command1
+lrwxrwxrwx 1 eric www 32 mars  11 17:25 0 -> ../../../scope1-cli/bin/command1
+```
+
+This is raised as [Lerna issue #1974](https://github.com/lerna/lerna/issues/1974). For now, we can force the correct name, but will have to do it every time lerna touches that repo:
+
+``` bash
+mv packages/scope1-test/node_modules/.bin/{0,command1}
+```
+
+Now that we have a short, predictable path to `command1`, we can create `packages/scope1-test/test/cli-test.js` to test that it can execute `command1`:
+
+``` javascript
+let child_process = require('child_process');
+
+describe("The command1 script", function () {
+  it("should see all", () => {
+    return new Promise((resolve, reject) => {
+      let program = child_process.spawn(__dirname + "/../node_modules/.bin/command1");
+      let stdout = ""
+      program.stdout.on("data", data => { stdout += data; });
+      program.on("exit", exitCode => {
+        setTimeout(
+          () => resolve({stdout:stdout, exitCode:exitCode}), 0
+        )
+      })
+      program.on("error", err => { reject(err); })
+    }).then(result => {
+      if (!result.stdout.includes("sees all"))
+        throw new Error("saw " + JSON.stringify(result))
+    })
+  })
+})
+```
+
+, run the test:
+
+``` bash
+(cd packages/scope1-test/ && npm test)
+```
+
+, and see encouraging output:
+
+```
+  The command1 script
+    ✓ should see all (125ms)
+
+
+  1 passing (132ms)
+```
+
