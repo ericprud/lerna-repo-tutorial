@@ -185,3 +185,55 @@ Make sure you come back to the tutorial directory before we go on to testing.
 ``` bash
 cd ../tutorial
 ```
+
+# Publishing
+
+As with other package management functions, Lerna can publish your packages, but it integrates management of git releases at the same time. The (interactive) `lerna publish` command publishes all known (i.e. reachable by the globs in `lerna.json`'s `packages` property.
+
+Before publishing, you'll want to verify your login credentials. If you're using the npm repository, you can login in with `npm adduser` and verify your identity with `npm whoami`. If Lerna encounters an authentication problem during publishing, it will have already:
+
+1. updated the `package.json` in all of the package directories.
+2. committed that in a commit with the release name (e.g. "v0.1.0").
+3. added a lightweight tag with the release name ("v0.1.0" again).
+4. done a git push.
+
+so if you want to try again with the same version, you will have to delete the tag (`git tag -d v0.1.0` and `git push --delete origin v0.1.0`) and hard-reset the commit (`git reset HEAD~1`).
+
+The `version` property overrides the versions in the packages' `package.json` files. Starting from version 0.0.0, the first interaction prompts you for the version to publish. Here we select `0.1.0`
+
+```
+$ npx lerna publish
+lerna notice cli v3.13.1
+lerna info current version 0.0.0
+lerna info Looking for changed packages since v0.9.0
+? Select a new version (currently 0.0.0) (Use arrow keys)
+  Patch (0.0.1) 
+❯ Minor (0.1.0) 
+  Major (1.0.0) 
+  Prepatch (0.0.1-alpha.0) 
+  Preminor (0.1.0-alpha.0) 
+  Premajor (1.0.0-alpha.0) 
+  Custom Prerelease 
+  Custom Version 
+```
+
+It then lists the packages to be published and asks for confirmation:
+
+```
+? Select a new version (currently 0.0.0) Minor (0.1.0)
+
+Changes:
+ - furk: 0.0.0-development => 0.1.0 (private)
+ - @shex/extension-map: 0.1.0 => 0.1.0
+ - @shex/extension-test: 0.1.0 => 0.1.0
+ - shape-map: 0.1.0 => 0.1.0
+ - @shex/cli: 0.1.0 => 0.1.0
+ - @shex/core: 0.0.0 => 0.1.0
+ - @shex/loader: 0.1.1 => 0.1.0
+ - @shex/parser: 0.0.9 => 0.1.0
+ - @shex/webapp: 0.1.0 => 0.1.0
+
+? Are you sure you want to publish these packages? (ynH) 
+```
+
+Here we see that it overrides versions in package.json, even if they are later versions. In fact, lerna will write the master version number into each `package.json`.
